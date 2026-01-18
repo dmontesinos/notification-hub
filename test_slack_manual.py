@@ -4,7 +4,7 @@ from notification_hub import NotificationFactory
 
 # Configuration
 # You can set the SLACK_BOT_TOKEN environment variable or edit this file directly
-SLACK_TOKEN = os.environ.get("SLACK_BOT_TOKEN", "xoxb-10346132914400-10315883622326-eO3L7Tzy2IiyygEhRZPF1bC7")
+SLACK_TOKEN = os.environ.get("SLACK_BOT_TOKEN", "xoxb-xxx")
 CHANNEL = "#automations" # Change this to the channel you want to test (ensure the bot is in the channel)
 
 def main():
