@@ -7,20 +7,28 @@ class JiraProvider(AbstractProvider):
     Provider for interacting with Jira.
     """
 
-    def __init__(self, server: str, email: str, token: str):
+    def __init__(self, server: str, email: str, token: str, auth_method: str = 'basic'):
         """
         Initialize the Jira provider.
 
         Args:
-            server (str): The Jira server URL (e.g., "https://your-domain.atlassian.net").
-            email (str): The email address associated with the account.
-            token (str): The API token.
+            server (str): The Jira server URL.
+            email (str): The email address (for basic auth).
+            token (str): The API token or PAT.
+            auth_method (str): 'basic' or 'token'.
         """
-        self.client = JIRA(
-            server=server,
-            basic_auth=(email, token),
-            timeout=5
-        )
+        if auth_method == 'token':
+            self.client = JIRA(
+                server=server,
+                token_auth=token,
+                timeout=5
+            )
+        else:
+            self.client = JIRA(
+                server=server,
+                basic_auth=(email, token),
+                timeout=5
+            )
 
     def send_notification(self, destination: str, message: str, **kwargs) -> Dict[str, Any]:
         """

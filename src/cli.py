@@ -13,7 +13,8 @@ def setup_provider(args):
     return JiraProvider(
         server=args.server,
         email=args.user,
-        token=args.token
+        token=args.token,
+        auth_method=args.auth_method
     )
 
 def main():
@@ -23,6 +24,7 @@ def main():
     parser.add_argument("--server", required=True, help="Jira Server URL")
     parser.add_argument("--user", required=True, help="Jira Username/Email")
     parser.add_argument("--token", required=True, help="Jira API Token")
+    parser.add_argument("--auth-method", default="basic", choices=["basic", "token"], help="Authentication method")
 
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
 
