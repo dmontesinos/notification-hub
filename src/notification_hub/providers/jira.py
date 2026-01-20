@@ -18,7 +18,8 @@ class JiraProvider(AbstractProvider):
         """
         self.client = JIRA(
             server=server,
-            basic_auth=(email, token)
+            basic_auth=(email, token),
+            timeout=5
         )
 
     def send_notification(self, destination: str, message: str, **kwargs) -> Dict[str, Any]:
