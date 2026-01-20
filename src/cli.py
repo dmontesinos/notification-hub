@@ -23,7 +23,7 @@ def main():
     # Global args
     parser.add_argument("--server", required=True, help="Jira Server URL")
     parser.add_argument("--user", required=True, help="Jira Username/Email")
-    parser.add_argument("--token", required=True, help="Jira API Token")
+    parser.add_argument("--token", help="Jira API Token (optional, defaults to config/secrets/jira_token)")
     parser.add_argument("--auth-method", default="basic", choices=["basic", "token"], help="Authentication method")
 
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
@@ -96,6 +96,15 @@ def main():
 
     # Initialize Provider
     try:
+        if not args.token:
+            # Try to read from default secrets file
+            secret_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'config', 'secrets', 'jira_token')
+            if os.path.exists(secret_path):
+                with open(secret_path, 'r') as f:
+                    args.token = f.read().strip()
+            else:
+                 raise Exception(f"Token not provided and secret file not found at {secret_path}")
+
         provider = setup_provider(args)
     except Exception as e:
         print(json.dumps({"error": str(e)}))
