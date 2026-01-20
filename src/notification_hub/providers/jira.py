@@ -58,15 +58,47 @@ class JiraProvider(AbstractProvider):
     def create_issue(self, project: str, summary: str, description: str, issue_type: str = "Task", **kwargs) -> Dict[str, Any]:
         """
         Explicit method to create an issue, for better readability than send_notification.
-        
-        Args:
-            project (str): Project key.
-            summary (str): Issue summary.
-            description (str): Issue description.
-            issue_type (str): Issue type (default "Task").
-            **kwargs: Additional fields.
-            
-        Returns:
-            Dict[str, Any]: Issue details.
         """
         return self.send_notification(project, summary, description=description, issue_type=issue_type, **kwargs)
+
+    def update_issue(self, key: str, **fields) -> None:
+        """
+        Update an existing Jira issue.
+        """
+        try:
+            issue = self.client.issue(key)
+            issue.update(fields=fields)
+        except JIRAError as e:
+            raise e
+
+    def delete_issue(self, key: str) -> None:
+        """
+        Delete a Jira issue.
+        """
+        try:
+            issue = self.client.issue(key)
+            issue.delete()
+        except JIRAError as e:
+            raise e
+
+    def transition_issue(self, key: str, transition_id: str) -> None:
+        """
+        Transition a Jira issue to a new status.
+        """
+        try:
+            self.client.transition_issue(key, transition_id)
+        except JIRAError as e:
+            raise e
+
+    def get_transition_id_for_status(self, key: str, status_name: str) -> str:
+        """
+        Get the transition ID for a given status name.
+        """
+        try:
+            transitions = self.client.transitions(key)
+            for t in transitions:
+                if t['to']['name'].lower() == status_name.lower():
+                    return t['id']
+            return None
+        except JIRAError as e:
+            raise e
